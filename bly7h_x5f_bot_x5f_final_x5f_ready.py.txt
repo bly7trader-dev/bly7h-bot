@@ -1,0 +1,127 @@
+import logging
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+
+# ========= الاعدادات - عدل دول بس =========
+BOT_TOKEN = "ضع_توكن_البوت_هنا_من_BotFather"
+ADMIN_WALLET = "0xYOUR_WALLET_HERE"  # محفظتك اللي هتستقبل BNB
+TOKEN_ADDRESS = "0x88507..."  # عنوان عقد Bly7h
+TOKEN_PRICE = 0.0005
+# ======================================
+
+logging.basicConfig(level=logging.INFO)
+
+WELCOME_TEXT = """
+𓂀 مرحبا بك في معبد Bly7h المقدس 𓂀
+
+أنا حارس المعبد، بوت التعدين الفرعوني 👑
+
+💎 توكن Bly7h النادر - 7,777,777 فقط
+⛏️ عدن كل 8 ساعات واجمع الذهب
+𓋹 كل إحالة = 500 ذهبة في خزنتك
+
+اختر من بردية القوة:
+"""
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [
+        [InlineKeyboardButton("𓂀 استدعاء قوة التعدين ⛏️", callback_data='mine')],
+        [InlineKeyboardButton("💰 خزينة الذهب", callback_data='balance'),
+         InlineKeyboardButton("📜 بردية الإحصائيات", callback_data='stats')],
+        [InlineKeyboardButton("𓀀 دعوة الكهنة (إحالة)", callback_data='referral')],
+        [InlineKeyboardButton("💎 الشراء المسبق Presale", callback_data='presale')],
+        [InlineKeyboardButton("🔗 عنوان التوكن Bly7h", callback_data='token')],
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text(WELCOME_TEXT, reply_markup=reply_markup)
+
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    
+    if query.data == 'mine':
+        await query.edit_message_text(
+            "⛏️ 𓂀 تم استدعاء قوة التعدين Bly7h!\n\n"
+            "حصلت على 100 ذهبة فرعونية 💰\n"
+            "ارجع بعد 8 ساعات لتعدين جديد\n\n"
+            "لقبك الحالي: حارس المعبد 𓀀",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 رجوع للمعبد", callback_data='back')]])
+        )
+    elif query.data == 'balance':
+        await query.edit_message_text(
+            "💰 خزينة الذهب الملكية - Bly7h\n\n"
+            "رصيدك: 0 Bly7h\n"
+            "قيمة الذهب: $0\n\n"
+            "استمر في التعدين لتملأ الخزينة 👑",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 رجوع", callback_data='back')]])
+        )
+    elif query.data == 'presale':
+        await query.edit_message_text(
+            f"💎 الشراء المسبق - معبد Bly7h المقدس 𓂀\n\n"
+            f"سعر التوكن: ${TOKEN_PRICE}\n"
+            f"العقد: `{TOKEN_ADDRESS}`\n\n"
+            f"الباقات الفرعونية:\n"
+            f"𓋹 1,000 Bly7h = $0.5\n"
+            f"𓋹 5,000 Bly7h = $2.5\n"
+            f"𓋹 20,000 Bly7h = $10 ( + بونص 10% )\n"
+            f"𓋹 100,000 Bly7h = $50 ( + بونص 20% ) 👑\n\n"
+            f"حول BNB على:\n`{ADMIN_WALLET}`\n\n"
+            f"ثم ابعت /buy TX_HASH",
+            parse_mode='Markdown',
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 رجوع", callback_data='back')]])
+        )
+    elif query.data == 'token':
+        await query.edit_message_text(
+            f"🔗 عنوان توكن Bly7h الموحد:\n\n`{TOKEN_ADDRESS}`\n\n"
+            f"الشبكة: BNB Smart Chain\n"
+            f"الصورة: لوجو Bly7h الذهبي الفرعوني 𓂀",
+            parse_mode='Markdown',
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 رجوع", callback_data='back')]])
+        )
+    elif query.data == 'referral':
+        user_id = query.from_user.id
+        link = f"https://t.me/{context.bot.username}?start={user_id}"
+        await query.edit_message_text(
+            f"𓀀 دعوة الكهنة - Bly7h\n\n"
+            f"رابطك الخاص:\n`{link}`\n\n"
+            f"كل واحد يدخل من رابطك تاخد 500 Bly7h 💰",
+            parse_mode='Markdown',
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 رجوع", callback_data='back')]])
+        )
+    elif query.data == 'stats':
+        await query.edit_message_text(
+            "📜 بردية الإحصائيات - Bly7h\n\n"
+            "إجمالي المعدنين: 0\n"
+            "إجمالي الذهب الموزع: 0 Bly7h\n"
+            "سعر التوكن: $0.0005\n\n"
+            "المعبد يكبر بك 👑",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 رجوع", callback_data='back')]])
+        )
+    elif query.data == 'back':
+        keyboard = [
+            [InlineKeyboardButton("𓂀 استدعاء قوة التعدين ⛏️", callback_data='mine')],
+            [InlineKeyboardButton("💰 خزينة الذهب", callback_data='balance'),
+             InlineKeyboardButton("📜 بردية الإحصائيات", callback_data='stats')],
+            [InlineKeyboardButton("𓀀 دعوة الكهنة (إحالة)", callback_data='referral')],
+            [InlineKeyboardButton("💎 الشراء المسبق Presale", callback_data='presale')],
+            [InlineKeyboardButton("🔗 عنوان التوكن Bly7h", callback_data='token')],
+        ]
+        await query.edit_message_text(WELCOME_TEXT, reply_markup=InlineKeyboardMarkup(keyboard))
+
+async def buy_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "✅ تم استلام طلب الشراء Bly7h 𓂀\n"
+        "جاري فحص المعاملة على البلوكتشين...\n"
+        "سيتم إرسال التوكنات لخزنتك خلال 24 ساعة 👑"
+    )
+
+def main():
+    app = Application.builder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("buy", buy_command))
+    app.add_handler(CallbackQueryHandler(button_handler))
+    print("𓂀 بوت Bly7h الفرعوني شغال...")
+    app.run_polling()
+
+if __name__ == '__main__':
+    main()
