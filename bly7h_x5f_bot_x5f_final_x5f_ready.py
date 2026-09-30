@@ -1,14 +1,13 @@
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
-
-# ========= الاعدادات - عدل دول بس =========
-BOT_TOKEN = "ضع_توكن_البوت_هنا_من_BotFather"
-ADMIN_WALLET = "0xYOUR_WALLET_HERE"  # محفظتك اللي هتستقبل BNB
-TOKEN_ADDRESS = "0x88507..."  # عنوان عقد Bly7h
+# ======= الاعدادات - جاهز =======
+import os
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+ADMIN_WALLET = "0xCc0263893F6ddB1d96fE28f61cF5ec030F9E0292"
+TOKEN_ADDRESS = "0x88507..."
 TOKEN_PRICE = 0.0005
-# ======================================
-
+# ===============================
 logging.basicConfig(level=logging.INFO)
 
 WELCOME_TEXT = """
