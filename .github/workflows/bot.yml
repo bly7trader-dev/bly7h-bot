@@ -1,6 +1,5 @@
 name: Bly7h Bot
-on: 
-  push:
+on:
   workflow_dispatch:
 jobs:
   run:
